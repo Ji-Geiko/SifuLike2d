@@ -27,12 +27,12 @@ public class BrutScript : MonoBehaviour
         }
         else if(distance < closeRange)
         {
-            transform.Translate(Vector3.right * Time.deltaTime);
+            transform.Translate(Vector3.right * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
             state = "close";
         }
         else if(distance < longRange)
         {
-            transform.Translate(Vector3.left * Time.deltaTime);
+            transform.Translate(Vector3.left * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
             state = "long";
         }else
         {
