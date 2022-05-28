@@ -5,39 +5,70 @@ using UnityEngine;
 public class BrutScript : MonoBehaviour
 {
     public GameObject player;
-    public float closeRange = 1.5f;
+    public GameObject gameManager;
     public float[] attackRange = new float[2];
-    public float longRange  = 10f;
-    public string state = "idle";
+    public int agroRange = 10;
+    public Animator animator;
+    public bool reloading = false;
+    public float reloadTime = 2.0f;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        gameManager = GameObject.FindGameObjectWithTag("GameManager");
         attackRange[0] = 1.5f;
         attackRange[1] = 2f;
+        animator = gameObject.GetComponent<Animator>();
     }
 
     void Update()
     {
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        if(distance >= attackRange[0] && distance <= attackRange[1])
-        {
-            print("attack");
-            state = "attack";
+        if(distance<=agroRange){
+            if(distance > attackRange[0] && distance < attackRange[1] && !reloading)
+            {
+                Attack();
+            }
+            else if(distance < attackRange[0] || reloading)
+            {
+                transform.Translate(Vector3.right * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
+                print("close " + distance);
+            }
+            else if(distance > attackRange[1])
+            {
+                reloading = false;
+                transform.Translate(Vector3.left * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
+                print("long " + distance);
+            }
         }
-        else if(distance < closeRange)
-        {
-            transform.Translate(Vector3.right * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
-            state = "close";
+
+        if(reloading){
+            reloadTime-=Time.deltaTime;
         }
-        else if(distance < longRange)
+        if(reloadTime <= 0)
         {
-            transform.Translate(Vector3.left * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
-            state = "long";
-        }else
-        {
-            state = "idle";
+            reloadTime = 1.0f;
+            reloading = false;
         }
-        print(Vector3.Distance(transform.position, player.transform.position));
+    }
+
+    void Attack()
+    {
+        animator.SetBool("Attack", true);
+        if(player.transform.position.x<transform.position.x)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x,player.transform.position.y), 0.5f * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x,player.transform.position.y), 0.5f * Time.deltaTime);
+        }
+    }
+
+    void Damage()
+    {
+        animator.SetBool("Attack", false);
+        gameManager.SendMessage("AttackCheck", this.gameObject);
+        reloading = true;
     }
 }
