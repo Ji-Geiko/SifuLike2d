@@ -13,8 +13,10 @@ public class GameManagerScript : MonoBehaviour
     void AttackCheck(GameObject attacker)
     {
         if(attacker != player){
-            print("Player is attacked by " + attacker.name);
-            player.SendMessage("Damage", 10);
+            if(Vector3.Distance(attacker.transform.position, player.transform.position)<1.5f){
+                print("Player is attacked by " + attacker.name);
+                player.SendMessage("Damage", 10);
+            }
         }
     }
 

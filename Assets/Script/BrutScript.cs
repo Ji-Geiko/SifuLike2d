@@ -45,11 +45,11 @@ public class BrutScript : MonoBehaviour
         if(state == "attack"){            
             if(player.transform.position.x<transform.position.x)
             {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x + 1f, player.transform.position.y, transform.position.z), 1f * Time.deltaTime);
+                transform.position = Vector3.Slerp(transform.position, new Vector3(player.transform.position.x + 1f,  transform.position.y, transform.position.z), 2f * Time.deltaTime);
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x - 1f, player.transform.position.y, transform.position.z), 1f * Time.deltaTime);
+                transform.position = Vector3.Slerp(transform.position, new Vector3(player.transform.position.x - 1f, transform.position.y, transform.position.z), 2f * Time.deltaTime);
             }
         }
 
@@ -71,8 +71,8 @@ public class BrutScript : MonoBehaviour
 
     void Damage()
     {
-        animator.SetBool("Attack", false);
         gameManager.SendMessage("AttackCheck", this.gameObject);
+        animator.SetBool("Attack", false);
         reloading = true;
         state = "reloading";
     }
