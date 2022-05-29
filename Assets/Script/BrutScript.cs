@@ -11,6 +11,7 @@ public class BrutScript : MonoBehaviour
     public Animator animator;
     public bool reloading = false;
     public float reloadTime = 2.0f;
+    public string state = "idle";
 
     void Start()
     {
@@ -24,7 +25,7 @@ public class BrutScript : MonoBehaviour
     void Update()
     {
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        if(distance<=agroRange){
+        if(distance<=agroRange && state != "attack"){
             if(distance > attackRange[0] && distance < attackRange[1] && !reloading)
             {
                 Attack();
@@ -41,6 +42,16 @@ public class BrutScript : MonoBehaviour
                 print("long " + distance);
             }
         }
+        if(state == "attack"){            
+            if(player.transform.position.x<transform.position.x)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x + 1f, player.transform.position.y, transform.position.z), 1f * Time.deltaTime);
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x - 1f, player.transform.position.y, transform.position.z), 1f * Time.deltaTime);
+            }
+        }
 
         if(reloading){
             reloadTime-=Time.deltaTime;
@@ -54,15 +65,8 @@ public class BrutScript : MonoBehaviour
 
     void Attack()
     {
+        state = "attack";
         animator.SetBool("Attack", true);
-        if(player.transform.position.x<transform.position.x)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x,player.transform.position.y), 0.5f * Time.deltaTime);
-        }
-        else
-        {
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(player.transform.position.x,player.transform.position.y), 0.5f * Time.deltaTime);
-        }
     }
 
     void Damage()
@@ -70,5 +74,6 @@ public class BrutScript : MonoBehaviour
         animator.SetBool("Attack", false);
         gameManager.SendMessage("AttackCheck", this.gameObject);
         reloading = true;
+        state = "reloading";
     }
 }

@@ -10,6 +10,9 @@ public class PlayerAttackManager : MonoBehaviour
         hp -= damage;
         if(hp <= 0f){
             Destroy(this.gameObject);
+        }else{
+            this.SendMessage("OnDamage");
         }
+
     }
 }
