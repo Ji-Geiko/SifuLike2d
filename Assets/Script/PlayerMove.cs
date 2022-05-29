@@ -11,4 +11,8 @@ public class PlayerMove : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         transform.Translate(Vector3.right * h * speed * Time.deltaTime);
     }
+
+    void OnDamage () {
+        
+    }
 }
