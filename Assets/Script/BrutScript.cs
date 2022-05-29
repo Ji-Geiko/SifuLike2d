@@ -28,18 +28,21 @@ public class BrutScript : MonoBehaviour
         if(distance<=agroRange && state != "attack"){
             if(distance > attackRange[0] && distance < attackRange[1] && !reloading)
             {
+                animator.SetBool("Walk", false);
                 Attack();
             }
             else if(distance < attackRange[0] || reloading)
             {
                 transform.Translate(Vector3.right * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
                 print("close " + distance);
+                animator.SetBool("Walk", true);
             }
             else if(distance > attackRange[1])
             {
                 reloading = false;
                 transform.Translate(Vector3.left * Time.deltaTime * (transform.position.x - player.transform.position.x)/distance);
                 print("long " + distance);
+                animator.SetBool("Walk", true);
             }
         }
         if(state == "attack"){            
